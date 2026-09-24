@@ -36,6 +36,11 @@ elastic response, for a flexible pavement resilience study.
   `results/AC_base_modulus_2D.csv` (long format) and `.png` (a 2-panel
   governing-distress region map + design-life heatmap, both with the
   Nf=Nd boundary curve and the baseline point (500, 30 ksi) marked).
+- `sensitivity_AC_base_thickness_2D.py` — sweeps H_AC and H_base together
+  on a 40x40 linear grid (1600 PyMastic evaluations, ~12s), with all
+  moduli and subgrade Mr held fixed. Writes
+  `results/AC_base_thickness_2D.csv` and `.png` (same 2-panel layout as
+  the modulus 2D sweep, baseline point at (6, 10 in)).
 
 ## Key findings (baseline structure: 6 in AC / 10 in base, Mr=10 ksi)
 
@@ -89,6 +94,14 @@ thickness, AC modulus, base modulus) are now covered.
   baseline case (E_AC=500, E_base=30) sits just inside the
   rutting-governed region, close to the boundary — consistent with the
   baseline structure result throughout this README.
+- **AC x base thickness 2D sweep:** here the boundary is close to
+  **linear** (roughly a fixed combination of H_AC and H_base, i.e. total
+  structural capacity), unlike the curved modulus boundary. The baseline
+  case (6, 10 in) sits almost exactly on the boundary — consistent with
+  how close the two 1D thickness sweeps' crossovers (H_AC~7.3in at
+  H_base=10, H_base~11.4in at H_AC=6) both were to the baseline already.
+  This structure is right at its fatigue/rutting balance point; a small
+  change either way tips which distress governs.
 
 ## Numerical stability note (PyMastic)
 
