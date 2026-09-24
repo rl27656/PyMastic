@@ -30,6 +30,12 @@ elastic response, for a flexible pavement resilience study.
   first) and lays them out as a 5-panel comparison with a shared legend
   and a marked fatigue/rutting crossover per panel. Writes
   `results/combined_sensitivity.png`.
+- `sensitivity_AC_base_modulus_2D.py` — sweeps E_AC and E_base together on
+  a 40x40 log-spaced grid (1600 PyMastic evaluations, ~12s), with
+  thicknesses and subgrade Mr held fixed. Writes
+  `results/AC_base_modulus_2D.csv` (long format) and `.png` (a 2-panel
+  governing-distress region map + design-life heatmap, both with the
+  Nf=Nd boundary curve and the baseline point (500, 30 ksi) marked).
 
 ## Key findings (baseline structure: 6 in AC / 10 in base, Mr=10 ksi)
 
@@ -75,6 +81,14 @@ elastic response, for a flexible pavement resilience study.
 
 All five natural sweep variables (subgrade Mr, AC thickness, base
 thickness, AC modulus, base modulus) are now covered.
+- **AC x base modulus 2D sweep:** combining the two modulus sweeps into a
+  grid shows the full $N_f=N_d$ boundary as a curve rather than a single
+  crossover point. It's nearly vertical (governance is dominated by
+  E_AC), with a slight leftward bend at low E_base consistent with the
+  1D base-modulus sweep's crossover (~18-20 ksi at E_AC=500). The
+  baseline case (E_AC=500, E_base=30) sits just inside the
+  rutting-governed region, close to the boundary — consistent with the
+  baseline structure result throughout this README.
 
 ## Numerical stability note (PyMastic)
 
