@@ -23,6 +23,9 @@ elastic response, for a flexible pavement resilience study.
 - `sensitivity_AC_modulus.py` — sweeps AC modulus (100-2000 ksi, a
   temperature-driven seasonal range) with all thicknesses and the other
   moduli held fixed. Writes `results/AC_modulus_sensitivity.csv` and `.png`.
+- `sensitivity_base_modulus.py` — sweeps granular base modulus (10-100 ksi)
+  with all thicknesses, AC modulus, and subgrade Mr held fixed. Writes
+  `results/base_modulus_sensitivity.csv` and `.png`.
 
 ## Key findings (baseline structure: 6 in AC / 10 in base, Mr=10 ksi)
 
@@ -51,8 +54,23 @@ elastic response, for a flexible pavement resilience study.
   itself (both models include an E_AC^-exponent term) in addition to
   changing the LEA strains — so the fatigue-life curve responds to E_AC
   through two combined mechanisms, unlike the other three sweeps.
+- **Base modulus sweep:** the crossover **direction reverses** here
+  compared to the other four sweeps — low base modulus (E_base <~ 20 ksi,
+  a weak/undercompacted base) is **fatigue**-governed, and high base
+  modulus (a strong/well-compacted base) is **rutting**-governed, crossing
+  over around E_base ~ 18-20 ksi. That's because eps_t (bottom-of-AC
+  tensile strain, which drives fatigue life via a steeper strain exponent)
+  falls off faster with increasing base modulus than eps_c (top-of-
+  subgrade compressive strain, which drives rutting life) does — so
+  fatigue life overtakes rutting life as the base stiffens, the opposite
+  of what happens in the other four sweeps. Also note eps_c is *not*
+  monotonic in E_base here (it rises slightly from E_base=10 to ~20 ksi
+  before falling) — a real layered-elastic effect from the base/subgrade
+  modulus ratio, not a numerical artifact (visible as the small dip in the
+  green curve early in `base_modulus_sensitivity.png`).
 
-Sweep base modulus the same way to complete the structural/modulus set.
+All five natural sweep variables (subgrade Mr, AC thickness, base
+thickness, AC modulus, base modulus) are now covered.
 
 ## Numerical stability note (PyMastic)
 
