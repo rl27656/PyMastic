@@ -47,6 +47,12 @@ elastic response, for a flexible pavement resilience study.
   grid, with base thickness and the other moduli held fixed. Writes
   `results/Mr_AC_thickness_2D.csv` and `.png` (same 2-panel layout,
   baseline point at (6 in, 10 ksi)).
+- `combined_2D_sweeps_figure.py` — reads `AC_base_modulus_2D.csv` and
+  `AC_base_thickness_2D.csv` (run those two sweeps first) and lays their
+  governing-distress region maps side by side with one shared legend.
+  Companion to `combined_sensitivity_figure.py`'s 6th panel: together the
+  two combined figures cover all three 2D sweeps. Writes
+  `results/combined_2D_sweeps.png`.
 
 ## Key findings (baseline structure: 6 in AC / 10 in base, Mr=10 ksi)
 
