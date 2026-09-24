@@ -41,6 +41,11 @@ elastic response, for a flexible pavement resilience study.
   moduli and subgrade Mr held fixed. Writes
   `results/AC_base_thickness_2D.csv` and `.png` (same 2-panel layout as
   the modulus 2D sweep, baseline point at (6, 10 in)).
+- `sensitivity_Mr_AC_thickness_2D.py` — sweeps subgrade Mr (seasonal/
+  environmental) and AC thickness (structural) together on a 40x40 linear
+  grid, with base thickness and the other moduli held fixed. Writes
+  `results/Mr_AC_thickness_2D.csv` and `.png` (same 2-panel layout,
+  baseline point at (6 in, 10 ksi)).
 
 ## Key findings (baseline structure: 6 in AC / 10 in base, Mr=10 ksi)
 
@@ -102,6 +107,18 @@ thickness, AC modulus, base modulus) are now covered.
   H_base=10, H_base~11.4in at H_AC=6) both were to the baseline already.
   This structure is right at its fatigue/rutting balance point; a small
   change either way tips which distress governs.
+- **Subgrade Mr x AC thickness 2D sweep:** the one 2D sweep crossing a
+  seasonal/environmental variable with a structural design variable. The
+  boundary curve is a direct "how much AC thickness buys back the design
+  life lost to seasonal subgrade softening" answer — e.g. at Mr~10 ksi
+  (baseline, spring-thaw-like) it takes ~7.3 in of AC to stay out of the
+  rutting-governed region; at Mr~15 ksi only ~4.7 in; at Mr~20 ksi only
+  ~3.2 in. At Mr~5 ksi (a worse-case soft thaw), the boundary has moved
+  past the top of the tested range entirely — even 12 in of AC stays
+  rutting-governed, meaning AC thickness alone can't fully compensate for
+  a subgrade that soft at this base/load. The baseline point (6 in,
+  10 ksi) again sits close to the boundary, same as the other two 2D
+  sweeps that include H_AC.
 
 ## Numerical stability note (PyMastic)
 
