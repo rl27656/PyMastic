@@ -1,12 +1,13 @@
 """
-Combined 5-panel figure comparing all sensitivity sweeps.
+Combined 6-panel figure comparing all sensitivity sweeps.
 
 Reads the CSVs already written by sensitivity_subgrade_Mr.py,
 sensitivity_AC_thickness.py, sensitivity_base_thickness.py,
-sensitivity_AC_modulus.py, and sensitivity_base_modulus.py (run those
-first) and lays them out on one figure with a shared legend, so the
-fatigue/rutting crossover behavior can be compared side by side across
-all five variables.
+sensitivity_AC_modulus.py, sensitivity_base_modulus.py, and
+sensitivity_Mr_AC_thickness_2D.py (run those first) and lays them out on
+one figure with a shared legend, so the fatigue/rutting crossover
+behavior can be compared side by side across all five 1D sweeps plus the
+one 2D (environmental x structural) sweep.
 
 Output
 ------
@@ -16,10 +17,12 @@ import os
 import csv
 import math
 
+import numpy as np
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
+from matplotlib.colors import ListedColormap
 
 RESULTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "results")
 
@@ -115,11 +118,48 @@ for ax, (fname, xcol, title, xlabel, xscale) in zip(axes_flat, PANELS):
 axes[0, 0].set_ylabel("Allowable load repetitions (ESALs)", color=SEC_INK, fontsize=10)
 axes[1, 0].set_ylabel("Allowable load repetitions (ESALs)", color=SEC_INK, fontsize=10)
 
-# 6th cell: legend + summary
-legend_ax = axes_flat[5]
-legend_ax.axis("off")
-legend_ax.set_facecolor(SURFACE)
+# --- 6th cell: Mr x AC thickness 2D governance map ---
+ax6 = axes_flat[5]
+ax6.set_facecolor(SURFACE)
 
+rows2d = read_csv(os.path.join(RESULTS_DIR, "Mr_AC_thickness_2D.csv"))
+H_AC_vals = sorted(set(float(r["H_AC_in"]) for r in rows2d))
+Mr_vals = sorted(set(float(r["Mr_ksi"]) for r in rows2d))
+hac_index = {v: j for j, v in enumerate(H_AC_vals)}
+mr_index = {v: i for i, v in enumerate(Mr_vals)}
+gov_grid = np.zeros((len(Mr_vals), len(H_AC_vals)))
+Nf_grid = np.zeros_like(gov_grid)
+Nd_grid = np.zeros_like(gov_grid)
+for r in rows2d:
+    i, j = mr_index[float(r["Mr_ksi"])], hac_index[float(r["H_AC_in"])]
+    gov_grid[i, j] = 1.0 if r["governing_AI"] == "rutting" else 0.0
+    Nf_grid[i, j] = float(r["Nf_AI"])
+    Nd_grid[i, j] = float(r["Nd_AI"])
+
+H_AC_vals_a = np.array(H_AC_vals)
+Mr_vals_a = np.array(Mr_vals)
+dAC = (H_AC_vals_a[1] - H_AC_vals_a[0]) / 2
+dMr = (Mr_vals_a[1] - Mr_vals_a[0]) / 2
+AC_edges = np.concatenate([[H_AC_vals_a[0] - dAC], H_AC_vals_a[:-1] + dAC, [H_AC_vals_a[-1] + dAC]])
+Mr_edges = np.concatenate([[Mr_vals_a[0] - dMr], Mr_vals_a[:-1] + dMr, [Mr_vals_a[-1] + dMr]])
+
+gov_cmap = ListedColormap([BLUE, AQUA])
+ax6.pcolormesh(AC_edges, Mr_edges, gov_grid, cmap=gov_cmap, vmin=0, vmax=1, shading="flat")
+ax6.contour(H_AC_vals_a, Mr_vals_a, np.log10(Nf_grid) - np.log10(Nd_grid),
+            levels=[0], colors=INK, linewidths=1.8)
+ax6.plot(6, 10, marker="*", markersize=14, markerfacecolor=SURFACE,
+         markeredgecolor=INK, markeredgewidth=1.3, linestyle="none", zorder=5)
+ax6.text(9.3, 21, "Fatigue-governed", color=INK, fontsize=8, ha="center", va="center")
+ax6.text(4.3, 6, "Rutting-governed", color=SURFACE, fontsize=8, ha="center", va="center")
+
+ax6.set_title("Subgrade $M_r$ x AC Thickness (2D)", color=INK, fontsize=12, fontweight="bold", pad=10)
+ax6.set_xlabel("$H_{AC}$ (in)", color=SEC_INK, fontsize=10)
+ax6.set_ylabel("$M_r$ (ksi)", color=SEC_INK, fontsize=10)
+ax6.tick_params(colors=MUTED, labelsize=8)
+for spine in ax6.spines.values():
+    spine.set_visible(False)
+
+# --- shared legend across the whole figure ---
 handles = [
     plt.Line2D([0], [0], color=BLUE, linewidth=2, marker="o", markersize=6,
                markerfacecolor=SURFACE, markeredgecolor=BLUE,
@@ -132,16 +172,18 @@ handles = [
                label="Rutting life $N_d$ (Asphalt Institute)"),
     plt.Line2D([0], [0], color=MUTED, linewidth=1.2, linestyle=(0, (4, 3)),
                label="Fatigue/rutting crossover ($N_f$=$N_d$, AI)"),
+    plt.Line2D([0], [0], marker="*", markersize=11, markerfacecolor=SURFACE,
+               markeredgecolor=INK, linestyle="none", label="Baseline design point"),
 ]
-legend_ax.legend(handles=handles, loc="center", frameon=False, fontsize=10,
-                  labelcolor=SEC_INK, title="Series", title_fontsize=11)
+fig.legend(handles=handles, loc="lower center", ncol=5, frameon=False, fontsize=9.5,
+           labelcolor=SEC_INK, bbox_to_anchor=(0.5, 0.0))
 
-fig.suptitle("Flexible Pavement Design Life Sensitivity — Five-Variable Comparison\n"
+fig.suptitle("Flexible Pavement Design Life Sensitivity — Six-Panel Comparison\n"
              "(baseline: 6 in AC / 10 in base, $E_{AC}$=500 ksi, $E_{base}$=30 ksi, $M_r$=10 ksi)",
              color=INK, fontsize=14, fontweight="bold", y=0.98)
 
 fig.tight_layout()
-fig.subplots_adjust(top=0.84, hspace=0.35, wspace=0.28)
+fig.subplots_adjust(top=0.84, bottom=0.10, hspace=0.42, wspace=0.28)
 png_path = os.path.join(RESULTS_DIR, "combined_sensitivity.png")
 fig.savefig(png_path, facecolor=SURFACE)
 print(f"Wrote {png_path}")

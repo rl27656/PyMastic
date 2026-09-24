@@ -26,10 +26,11 @@ elastic response, for a flexible pavement resilience study.
 - `sensitivity_base_modulus.py` — sweeps granular base modulus (10-100 ksi)
   with all thicknesses, AC modulus, and subgrade Mr held fixed. Writes
   `results/base_modulus_sensitivity.csv` and `.png`.
-- `combined_sensitivity_figure.py` — reads all five sweeps' CSVs (run them
-  first) and lays them out as a 5-panel comparison with a shared legend
-  and a marked fatigue/rutting crossover per panel. Writes
-  `results/combined_sensitivity.png`.
+- `combined_sensitivity_figure.py` — reads all five 1D sweeps' CSVs plus
+  `Mr_AC_thickness_2D.csv` (run those first) and lays them out as a
+  6-panel comparison (five 1D line panels + the Mr x AC thickness 2D
+  governance map) with one shared legend and a marked fatigue/rutting
+  crossover per panel. Writes `results/combined_sensitivity.png`.
 - `sensitivity_AC_base_modulus_2D.py` — sweeps E_AC and E_base together on
   a 40x40 log-spaced grid (1600 PyMastic evaluations, ~12s), with
   thicknesses and subgrade Mr held fixed. Writes
