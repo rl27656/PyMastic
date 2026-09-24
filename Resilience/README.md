@@ -26,6 +26,10 @@ elastic response, for a flexible pavement resilience study.
 - `sensitivity_base_modulus.py` — sweeps granular base modulus (10-100 ksi)
   with all thicknesses, AC modulus, and subgrade Mr held fixed. Writes
   `results/base_modulus_sensitivity.csv` and `.png`.
+- `combined_sensitivity_figure.py` — reads all five sweeps' CSVs (run them
+  first) and lays them out as a 5-panel comparison with a shared legend
+  and a marked fatigue/rutting crossover per panel. Writes
+  `results/combined_sensitivity.png`.
 
 ## Key findings (baseline structure: 6 in AC / 10 in base, Mr=10 ksi)
 
