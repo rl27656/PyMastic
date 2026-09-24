@@ -17,6 +17,9 @@ elastic response, for a flexible pavement resilience study.
 - `sensitivity_AC_thickness.py` — sweeps AC surface thickness (3-12 in) with
   base thickness, all moduli, and load held fixed. Writes
   `results/AC_thickness_sensitivity.csv` and `.png`.
+- `sensitivity_base_thickness.py` — sweeps granular base thickness (4-20 in)
+  with AC thickness, all moduli, and load held fixed. Writes
+  `results/base_thickness_sensitivity.csv` and `.png`.
 
 ## Key findings (baseline structure: 6 in AC / 10 in base, Mr=10 ksi)
 
@@ -29,8 +32,15 @@ elastic response, for a flexible pavement resilience study.
   side — thin AC (<~7-8 in) is rutting-governed, thicker AC is
   fatigue-governed, crossing over around H_AC ~ 7-8 in for this base/
   subgrade combination.
+- **Base thickness sweep:** the same pattern again — thin base (<~11-12 in)
+  is rutting-governed, thicker base is fatigue-governed, crossing over
+  around H_base ~ 11-12 in. Unlike the AC sweep, fatigue life is nearly
+  flat here (base thickness barely changes eps_t at the bottom of AC),
+  so the crossover is driven almost entirely by rutting life falling as
+  the base thins — worth noting in the write-up as a distinct mechanism
+  from the AC-thickness crossover.
 
-Sweep other structural variables (base thickness, AC modulus) the same way
+Sweep other structural variables (AC modulus, base modulus) the same way
 to build out the rest of the sensitivity analysis.
 
 ## Numerical stability note (PyMastic)
@@ -42,11 +52,12 @@ around a total depth of 18 in at `iteration=40` (the value used in
 `sensitivity_subgrade_Mr.py`, safe there because total depth is fixed at
 16 in). Convergence for these single-point-at-load-center cases is reached
 well before that — `iteration=5` matches `iteration=40`'s result to 8+
-significant figures and stays finite across the full thickness sweep. If
-you extend these sweeps to larger structures, re-check for this and back
-off `iteration` (or watch for the library's own "singular matrix, PINV was
-used instead" warning) rather than assuming a higher iteration count is
-always more accurate.
+significant figures and stays finite across the full thickness sweep.
+`sensitivity_base_thickness.py` reaches 26 in total depth, well past that
+threshold, so it uses `iteration=5` too. If you extend these sweeps to
+larger structures, re-check for this and back off `iteration` (or watch
+for the library's own "singular matrix, PINV was used instead" warning)
+rather than assuming a higher iteration count is always more accurate.
 
 ## Caveats
 
