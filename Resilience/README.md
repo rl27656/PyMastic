@@ -20,6 +20,9 @@ elastic response, for a flexible pavement resilience study.
 - `sensitivity_base_thickness.py` — sweeps granular base thickness (4-20 in)
   with AC thickness, all moduli, and load held fixed. Writes
   `results/base_thickness_sensitivity.csv` and `.png`.
+- `sensitivity_AC_modulus.py` — sweeps AC modulus (100-2000 ksi, a
+  temperature-driven seasonal range) with all thicknesses and the other
+  moduli held fixed. Writes `results/AC_modulus_sensitivity.csv` and `.png`.
 
 ## Key findings (baseline structure: 6 in AC / 10 in base, Mr=10 ksi)
 
@@ -39,9 +42,17 @@ elastic response, for a flexible pavement resilience study.
   so the crossover is driven almost entirely by rutting life falling as
   the base thins — worth noting in the write-up as a distinct mechanism
   from the AC-thickness crossover.
+- **AC modulus sweep:** a second seasonal/environmental variable (AC
+  stiffens in cold weather, softens in heat), alongside subgrade Mr. Soft
+  AC (E_AC <~ 850-1000 ksi, e.g. hot weather) is rutting-governed; stiff AC
+  (e.g. cold weather) is fatigue-governed, crossing over around
+  E_AC ~ 850-1000 ksi. Note this is the one sweep where the varied
+  parameter also appears directly inside the fatigue transfer function
+  itself (both models include an E_AC^-exponent term) in addition to
+  changing the LEA strains — so the fatigue-life curve responds to E_AC
+  through two combined mechanisms, unlike the other three sweeps.
 
-Sweep other structural variables (AC modulus, base modulus) the same way
-to build out the rest of the sensitivity analysis.
+Sweep base modulus the same way to complete the structural/modulus set.
 
 ## Numerical stability note (PyMastic)
 
